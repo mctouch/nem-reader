@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" 
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd"
+             id="Definitions" targetNamespace="http://example.org/bpmn20">
+
+  <!-- Diagram 1: Submission of Metering Data (MDFF Files) -->
+  <process id="SubmitMeteringData" name="Submission of Metering Data">
+    <startEvent id="StartEvent_Submission" name="Start Submission"/>
+    <task id="PrepareMDFFFile" name="Prepare MDFF File"/>
+    <sequenceFlow id="flow1" sourceRef="StartEvent_Submission" targetRef="PrepareMDFFFile"/>
+    <task id="EncryptAndSubmitFile" name="Encrypt and Submit MDFF File"/>
+    <sequenceFlow id="flow2" sourceRef="PrepareMDFFFile" targetRef="EncryptAndSubmitFile"/>
+    <endEvent id="EndEvent_Submission" name="Submission Complete"/>
+    <sequenceFlow id="flow3" sourceRef="EncryptAndSubmitFile" targetRef="EndEvent_Submission"/>
+  </process>
+
+  <!-- Diagram 2: Receiving Metering Data Acknowledgment -->
+  <process id="ReceiveAcknowledgment" name="Receiving Metering Data Acknowledgment">
+    <startEvent id="StartEvent_ReceiveAck" name="Start Receiving ACK/NACK"/>
+    <task id="MonitorForResponse" name="Monitor for ACK/NACK Response"/>
+    <sequenceFlow id="flow4" sourceRef="StartEvent_ReceiveAck" targetRef="MonitorForResponse"/>
+    <exclusiveGateway id="Gateway_AckOrNack" name="ACK or NACK?"/>
+    <sequenceFlow id="flow5" sourceRef="MonitorForResponse" targetRef="Gateway_AckOrNack"/>
+    <task id="ProcessAck" name="Process ACK"/>
+    <sequenceFlow id="flow6" sourceRef="Gateway_AckOrNack" targetRef="ProcessAck" conditionExpression="#{isACK}"/>
+    <task id="ProcessNack" name="Process NACK"/>
+    <sequenceFlow id="flow7" sourceRef="Gateway_AckOrNack" targetRef="ProcessNack" conditionExpression="#{isNACK}"/>
+    <endEvent id="EndEvent_ReceiveAck" name="Acknowledgment Process Complete"/>
+    <sequenceFlow id="flow8" sourceRef="ProcessAck" targetRef="EndEvent_ReceiveAck"/>
+    <sequenceFlow id="flow9" sourceRef="ProcessNack" targetRef="EndEvent_ReceiveAck"/>
+  </process>
+
+  <!-- Diagram 3: Submitting and Receiving Adjustments -->
+  <process id="SubmitAdjustments" name="Submitting and Receiving Adjustments">
+    <startEvent id="StartEvent_Adjustments" name="Start Adjustments"/>
+    <task id="PrepareAdjustmentFile" name="Prepare Adjustment File"/>
+    <sequenceFlow id="flow10" sourceRef="StartEvent_Adjustments" targetRef="PrepareAdjustmentFile"/>
+    <task id="SubmitAdjustment" name="Submit Adjustment File"/>
+    <sequenceFlow id="flow11" sourceRef="PrepareAdjustmentFile" targetRef="SubmitAdjustment"/>
+    <task id="MonitorAdjustmentAck" name="Monitor Adjustment ACK/NACK"/>
+    <sequenceFlow id="flow12" sourceRef="SubmitAdjustment" targetRef="MonitorAdjustmentAck"/>
+    <endEvent id="EndEvent_Adjustments" name="Adjustments Process Complete"/>
+    <sequenceFlow id="flow13" sourceRef="MonitorAdjustmentAck" targetRef="EndEvent_Adjustments"/>
+  </process>
+
+  <!-- Diagram 4: Validations of NIM Files Before Submission -->
+  <process id="ValidateNIMFiles" name="Validations of NIM Files">
+    <startEvent id="StartEvent_Validation" name="Start Validation"/>
+    <task id="ValidateFileStructure" name="Validate File Structure"/>
+    <sequenceFlow id="flow14" sourceRef="StartEvent_Validation" targetRef="ValidateFileStructure"/>
+    <task id="CheckCompliance" name="Check Compliance with AEMO Rules"/>
+    <sequenceFlow id="flow15" sourceRef="ValidateFileStructure" targetRef="CheckCompliance"/>
+    <exclusiveGateway id="Gateway_ValidationResult" name="Validation Passed?"/>
+    <sequenceFlow id="flow16" sourceRef="CheckCompliance" targetRef="Gateway_ValidationResult"/>
+    <task id="FixErrors" name="Fix Validation Errors"/>
+    <sequenceFlow id="flow17" sourceRef="Gateway_ValidationResult" targetRef="FixErrors" conditionExpression="#{validationFailed}"/>
+    <sequenceFlow id="flow18" sourceRef="FixErrors" targetRef="CheckCompliance"/>
+    <endEvent id="EndEvent_Validation" name="Validation Complete"/>
+    <sequenceFlow id="flow19" sourceRef="Gateway_ValidationResult" targetRef="EndEvent_Validation" conditionExpression="#{validationPassed}"/>
+  </process>
+
+  <!-- Diagram 5: Handling Exceptions or Rejections -->
+  <process id="HandleExceptions" name="Handling Exceptions or Rejections">
+    <startEvent id="StartEvent_Exceptions" name="Start Exception Handling"/>
+    <task id="IdentifyRejectionReason" name="Identify Rejection Reason"/>
+    <sequenceFlow id="flow20" sourceRef="StartEvent_Exceptions" targetRef="IdentifyRejectionReason"/>
+    <task id="ResolveIssue" name="Resolve Issue"/>
+    <sequenceFlow id="flow21" sourceRef="IdentifyRejectionReason" targetRef="ResolveIssue"/>
+    <task id="ResubmitFile" name="Resubmit Corrected File"/>
+    <sequenceFlow id="flow22" sourceRef="ResolveIssue" targetRef="ResubmitFile"/>
+    <endEvent id="EndEvent_Exceptions" name="Exception Resolved"/>
+    <sequenceFlow id="flow23" sourceRef="ResubmitFile" targetRef="EndEvent_Exceptions"/>
+  </process>
+
+</definitions>

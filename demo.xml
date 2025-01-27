@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" 
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd"
+             id="Definitions" targetNamespace="http://example.org/bpmn20">
+
+  <!-- Diagram 1: Submission of Metering Data (MDFF Files) -->
+  <process id="SubmitMeteringData" name="Submission of Metering Data">
+    <startEvent id="StartEvent_Submission" name="Start Submission"/>
+    <task id="PrepareMDFFFile" name="Prepare MDFF File"/>
+    <sequenceFlow id="flow1" sourceRef="StartEvent_Submission" targetRef="PrepareMDFFFile"/>
+    <task id="EncryptAndSubmitFile" name="Encrypt and Submit MDFF File"/>
+    <sequenceFlow id="flow2" sourceRef="PrepareMDFFFile" targetRef="EncryptAndSubmitFile"/>
+    <endEvent id="EndEvent_Submission" name="Submission Complete"/>
+    <sequenceFlow id="flow3" sourceRef="EncryptAndSubmitFile" targetRef="EndEvent_Submission"/>
+  </process>
+
+  <bpmndi:BPMNDiagram id="BPMNDiagram_SubmitMeteringData">
+    <bpmndi:BPMNPlane id="BPMNPlane_SubmitMeteringData" bpmnElement="SubmitMeteringData">
+      <bpmndi:BPMNShape id="StartEvent_Submission_di" bpmnElement="StartEvent_Submission">
+        <dc:Bounds x="100" y="100" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="PrepareMDFFFile_di" bpmnElement="PrepareMDFFFile">
+        <dc:Bounds x="200" y="90" width="100" height="50"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EncryptAndSubmitFile_di" bpmnElement="EncryptAndSubmitFile">
+        <dc:Bounds x="350" y="90" width="150" height="50"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_Submission_di" bpmnElement="EndEvent_Submission">
+        <dc:Bounds x="550" y="100" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow1_di" bpmnElement="flow1">
+        <di:waypoint x="136" y="118"/>
+        <di:waypoint x="200" y="115"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow2_di" bpmnElement="flow2">
+        <di:waypoint x="300" y="115"/>
+        <di:waypoint x="350" y="115"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow3_di" bpmnElement="flow3">
+        <di:waypoint x="500" y="115"/>
+        <di:waypoint x="550" y="118"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
